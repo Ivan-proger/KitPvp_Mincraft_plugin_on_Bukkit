@@ -3,17 +3,32 @@ Class:
   lore:
     - " "
 
-Start_kit:
-  material: "IRON_AXE"
-  size: 10
-  helmet: "LEATHER_HELMET"
-  chestplate: "LEATHER_CHESTPLATE"      # 0   1  2  3  4  5  6  7  8
-  leggings: "LEATHER_LEGGINGS"          # 9  10 11 12 13 14 15 16 17
-  boots: "LEATHER_BOOTS"                # 18 19 20 21 22 23 24 25 26
-  name: "§bСтандартный кит"             # 27 28 29 30 31 32 33 34 35
-  lore:                                 # 36 37 38 39 40 41 42 43 44
-    - "§e---------------"               # 45 46 47 48 49 50 51 52 53
-    - "§7Лучший кит"
-    - "§7Для новичка"
-    - "§e---------------"
+Items:
+  item1:
+    material: "IRON_AXE"
+    size: 10
+    helmet: "LEATHER_HELMET"
+    chestplate: "LEATHER_CHESTPLATE"      # 0   1  2  3  4  5  6  7  8
+    leggings: "LEATHER_LEGGINGS"          # 9  10 11 12 13 14 15 16 17
+    boots: "LEATHER_BOOTS"                # 18 19 20 21 22 23 24 25 26
+    name: "§fСтандартный кит"             # 27 28 29 30 31 32 33 34 35
+    lore:                                 # 36 37 38 39 40 41 42 43 44
+      - "§e---------------"               # 45 46 47 48 49 50 51 52 53
+      - "§7Лучший кит"
+      - "§7Для новичка"
+      - "§e---------------"
 
+  item2:
+    material: "DIAMOND_SWORD"
+    size: 11
+    helmet: "IRON_HELMET"
+    chestplate: "IRON_CHESTPLATE"      # 0   1  2  3  4  5  6  7  8
+    leggings: "IRON_LEGGINGS"          # 9  10 11 12 13 14 15 16 17
+    boots: "IRON_BOOTS"                # 18 19 20 21 22 23 24 25 26
+    name: "§bАлмазный кит"             # 27 28 29 30 31 32 33 34 35
+    lore:                                 # 36 37 38 39 40 41 42 43 44
+      - "§e---------------"               # 45 46 47 48 49 50 51 52 53
+      - "§7Лучший кит за свои деньги"
+      - "§7Для если вы чуть лучше"
+      - "§7Новичков ва пойдет"
+      - "§e---------------"

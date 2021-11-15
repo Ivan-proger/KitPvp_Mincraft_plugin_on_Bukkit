@@ -1,5 +1,6 @@
 package org.kitpvp;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -14,7 +15,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 public final class Main extends JavaPlugin implements @NotNull Listener {
@@ -46,8 +48,6 @@ public final class Main extends JavaPlugin implements @NotNull Listener {
         Bukkit.getPluginManager().registerEvents(this, this);
         stackGlass();
 
-        menu.setSlotMenu(instance.getConfig().getString("Start_kit.material"), instance.getConfig().getString("Start_kit.name"),
-                instance.getConfig().getInt("Start_kit.size"), (ArrayList) instance.getConfig().getList("Start_kit.lore"));
 
     }
 
@@ -86,9 +86,10 @@ public final class Main extends JavaPlugin implements @NotNull Listener {
     }
 
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent event){
+    public void onInventoryClick(InventoryClickEvent event) throws SQLException, ClassNotFoundException {
         Player player = (Player) event.getWhoClicked();
         ItemStack item = event.getCurrentItem();
+
 
         if (event.getView().getTitle().equalsIgnoreCase("Menu")) {
             if (event.getCurrentItem() == null
@@ -99,29 +100,32 @@ public final class Main extends JavaPlugin implements @NotNull Listener {
                 return;
             }
             if(item.getLore().equals(instance.getConfig().getList("Class.lore"))){event.setCancelled(true); return;}
+            ArrayList<String> kits = PlayersDB.getKitsPlayer(player.getName());
 
-            if(item.getItemMeta().getDisplayName().equals(instance.getConfig().getString("Start_kit.name"))){
-                event.setCancelled(true);
-                player.getInventory().clear();
-                player.getInventory().addItem(new ItemStack(Material.DIAMOND_AXE));
-                ItemStack[] stack_kit_start = new ItemStack[4];
-                    stack_kit_start[3] = new ItemStack(Material.valueOf(instance.getConfig().getString("Start_kit.helmet")));
-                    stack_kit_start[2] = new ItemStack(Material.valueOf(instance.getConfig().getString("Start_kit.chestplate")));
-                    stack_kit_start[1] = new ItemStack(Material.valueOf(instance.getConfig().getString("Start_kit.leggings")));
-                    stack_kit_start[0] = new ItemStack(Material.valueOf(instance.getConfig().getString("Start_kit.boots")));
+            for (String key : instance.getConfig().getConfigurationSection("Items").getKeys(false)) {
+                if(item.getItemMeta().getDisplayName().equals(instance.getConfig().getString("Items." + key + ".name"))) {
+                    if (kits.contains(instance.getConfig().getString("Items." + key + ".name"))) {
+                        event.setCancelled(true);
+                        player.getInventory().clear();
+                        player.getInventory().addItem();
+                        ItemStack[] stack_kit_start = new ItemStack[4];
+                        stack_kit_start[3] = new ItemStack(Material.valueOf(instance.getConfig().getString("Items." + key + ".helmet")));
+                        stack_kit_start[2] = new ItemStack(Material.valueOf(instance.getConfig().getString("Items." + key + ".chestplate")));
+                        stack_kit_start[1] = new ItemStack(Material.valueOf(instance.getConfig().getString("Items." + key + ".leggings")));
+                        stack_kit_start[0] = new ItemStack(Material.valueOf(instance.getConfig().getString("Items." + key + ".boots")));
 
-                player.getInventory().setArmorContents(stack_kit_start);
-                player.closeInventory();
-                player.sendMessage(ChatColor.AQUA + "Вы выбрали стандартный кит для пвп!");
-
+                        player.getInventory().setArmorContents(stack_kit_start);
+                        player.closeInventory();
+                        player.sendMessage(ChatColor.AQUA + "Вы выбрали " + instance.getConfig().getString("Items." + key + ".name") + "!");
+                    }
+                    else {
+                        break;
+                    }
+                }
             }
         }
     }
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        return;
-    }
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e) throws SQLException, ClassNotFoundException {
@@ -132,7 +136,19 @@ public final class Main extends JavaPlugin implements @NotNull Listener {
             if (ent.getCustomName() == null) return;
             if (ent.getCustomName().equalsIgnoreCase("§4§lОружейник")) {
                 e.setCancelled(true);
-                PlayersDB.getKitsPlayer(e.getPlayer().getName());
+                ArrayList<String> kits = PlayersDB.getKitsPlayer(e.getPlayer().getName());
+
+                for (String key : instance.getConfig().getConfigurationSection("Items").getKeys(false)) {
+                    ArrayList<String> lore = (ArrayList<String>) instance.getConfig().getList("Items." + key + ".lore");
+
+                    if (kits.contains(instance.getConfig().getString("Items." + key + ".name"))){lore.add(ChatColor.GREEN+ "Доступно!");}
+                    else {lore.add(ChatColor.RED + "Недоступно!");}
+
+                    menu.setSlotMenu(instance.getConfig().getString("Items." + key + ".material"), instance.getConfig().getString("Items." + key + ".name"),
+                            instance.getConfig().getInt("Items." + key + ".size"), lore);
+                    lore.remove(lore.size() - 1);
+                }
+
                 menu.openInventory(p);
             }
         }

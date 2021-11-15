@@ -35,12 +35,14 @@ public class PlayersDB {
     }
 
     // --------Методы обращения к таблице--------
-    public static void setKitPlayerDB(String player) throws SQLException{
+    public static void setKitPlayerDB(String player, String nameKit) throws SQLException{
         try{
-            statmt.executeUpdate("INSERT INTO players (id) VALUES ('"+ player +"')");
+            statmt.executeUpdate("INSERT INTO kits (owner, nameKit) VALUES ('"+ player +"', '"+ nameKit +"')");
             Bukkit.getConsoleSender().sendMessage(ChatColor.BLUE + "Игрок " + player + " добавлен в базу!");
         } catch (org.sqlite.SQLiteException e){return;}
     }
+
+
 
     public static void setJoinPlayerDB(String player) throws SQLException{
         try{
@@ -49,9 +51,11 @@ public class PlayersDB {
         } catch (org.sqlite.SQLiteException e){return;}
     }
 
-    public static List<String> getKitsPlayer(String player) throws ClassNotFoundException, SQLException {
+
+
+    public static ArrayList<String> getKitsPlayer(String player) throws ClassNotFoundException, SQLException {
         resSet = statmt.executeQuery("SELECT nameKit" + "  FROM kits" + "  WHERE owner = '"+ player + "';");
-        List<String> list = new ArrayList<>();
+        ArrayList<String> list = new ArrayList<>();
 
         while (resSet.next()) {
             String kit = resSet.getString(1);
