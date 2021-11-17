@@ -48,7 +48,7 @@ public final class Main extends JavaPlugin implements @NotNull Listener {
         Bukkit.getPluginManager().registerEvents(this, this);
         stackGlass();
 
-
+        EconomyManager.init();
     }
 
     @Override
